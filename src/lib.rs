@@ -1,5 +1,4 @@
 use rand::Rng;
-use math::round;
 pub mod mechanics;
 use mechanics::gen_random;
 
@@ -51,14 +50,15 @@ fn gen_random_index(index:i32, max:i32) -> i32 {
 }
 
 fn calculate_nearest_square(n: i32) -> i32 {
-    round.floor((n as f64).sqrt(), 1) as i32
+    (n as f64).sqrt().round() as i32
 }
 
 pub fn generate_country_map(countries: Vec<Country>) -> Vec<Country> {
     // calculate row length 
     // then determine row numbers ? not sure if I need this
     // next iterate using row length to (find) the next layer of conected boundaries
-    let row_length =  countries.len();
+    let row_length =  calculate_nearest_square(countries.len().try_into().unwrap());
+    println!("{}", row_length);
     countries
 }
 
@@ -98,12 +98,27 @@ pub fn game_setup(players: i32) -> GameBoard {
 
 #[cfg(test)]
 mod tests {
-    use crate::{GameBoard, game_setup};
+    use crate::{GameBoard, game_setup, Country, generate_country_map};
 
     #[test]
     fn test_game_setup() {
         let result:GameBoard = game_setup(4);
         assert_eq!(result.players.len(), 4);
         assert_eq!(result.countries.len(), 12);
+    }
+
+    #[test]
+    fn test_generate_country_map() {
+        let boarders_vec = vec![]; 
+        let boarders_vec1 = vec![]; 
+        let boarders_vec2 = vec![]; 
+        let country1:Country = Country::new(1, boarders_vec, 1);
+        let country2:Country = Country::new(2, boarders_vec1, 1);
+        let country3:Country = Country::new(3, boarders_vec2, 1);
+        let countries = vec![country1, country2, country3];
+
+        let result = generate_country_map(countries);
+
+        assert_eq!(result.len(), 3)
     }
 }
